@@ -3,6 +3,7 @@ package com.example.b1014001.databasegraph;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BarChartActivity extends Activity {
 public static int bubblelabel;
@@ -67,7 +69,16 @@ public static int bubblelabel;
     }
     // this method is used to create data for bubble graph
     public BubbleData BubbleData(){
+        final int redColor = Color.parseColor("#ef5350");
+        final int greenColor = Color.parseColor("#66bb6a");
+        final float[] hsv = new float[3];
+        hsv[0]=118.0f;
+        hsv[1]=100.0f;
+        hsv[2]=27.0f;
+
+
         bubblelabel=0;
+        List<Integer> colors = new ArrayList();
         ArrayList<BubbleEntry> bubble = new ArrayList();
         MyOpenHelper helper = new MyOpenHelper(this);
         final SQLiteDatabase db = helper.getReadableDatabase();
@@ -77,6 +88,11 @@ public static int bubblelabel;
         boolean mov = c.moveToFirst();
         while (mov) {
             bubble.add(new BubbleEntry(bubblelabel,c.getInt(2),5));
+//            if(bubblelabel%2==0) {
+                colors.add(Color.HSVToColor(hsv));
+//            }else{
+//                colors.add(greenColor);
+//            }
             bubblelabel++;
             mov = c.moveToNext();
         }
@@ -90,7 +106,8 @@ public static int bubblelabel;
         db.close();
         BubbleDataSet bubbleDataSet = new BubbleDataSet( bubble ,"色");
         bubbleDataSet.setDrawValues(false);
-        bubbleDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//        bubbleDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        bubbleDataSet.setColors(colors);
         BubbleDataSet dataSet = bubbleDataSet; // get a dataset
         dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);//右のy軸を基準に
         BubbleData bubbleData = new BubbleData(getXAxisValues(),bubbleDataSet);
